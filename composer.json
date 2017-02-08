@@ -1,0 +1,28 @@
+{
+  "name": "xltxlm/phpexcel",
+  "description": "PHPExcel 读写简化类",
+  "authors": [
+    {
+      "name": "xltxlm",
+      "email": "xltxlm@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "phpoffice/phpexcel": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "xltxlm\\phpexcel\\": [
+        "src/"
+      ]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "xltxlm\\phpexcel\\": [
+        "./"
+      ]
+    }
+  }
+}
