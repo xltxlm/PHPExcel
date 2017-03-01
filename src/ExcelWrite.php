@@ -29,11 +29,13 @@ final class ExcelWrite
 
     /**
      * @param string $filename
+     *
      * @return ExcelWrite
      */
     public function setFilename(string $filename): ExcelWrite
     {
         $this->filename = $filename;
+
         return $this;
     }
 
@@ -138,8 +140,6 @@ final class ExcelWrite
 
             $charlen = strlen($v) + 5;
             $objPHPExcel->getActiveSheet()->getColumnDimension($char)->setWidth($charlen);
-            $objPHPExcel->getActiveSheet()->getStyle($char.$coli)->getNumberFormat()
-                ->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
             //设置列头值
             $PHPExcel_Worksheet->setCellValue($char.$coli, $v);
 
@@ -170,8 +170,15 @@ final class ExcelWrite
                 if ($key >= 26) {
                     $char = chr(64 + floor($key / 26)).$char;
                 }
+                //如果是数字
+                $exsist = preg_match('#^[0-9\.,]+$#', $v);
                 //以字符串的方式设置值,设定特定格式内容信息
-                $PHPExcel_Worksheet->setCellValueExplicit("{$char}{$coli}", $v);
+                if ($exsist) {
+                    $v = strtr($v, ["," => ""]);
+                    $PHPExcel_Worksheet->setCellValueExplicit("{$char}{$coli}", $v, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
+                } else {
+                    $PHPExcel_Worksheet->setCellValueExplicit("{$char}{$coli}", $v, \PHPExcel_Cell_DataType::TYPE_STRING2);
+                }
             }
         }
 
@@ -186,7 +193,18 @@ final class ExcelWrite
         } else {
             //直接输出excel到浏览器
             header('Content-Type: application/force-download');
-            header('Content-Disposition:inline;filename="'.basename($this->filename));
+            header('Content-disposition:attachment;filename="'.urlencode(basename($this->filename)));
+            $filename = basename($this->filename);
+            $encoded_filename = urlencode($filename);
+            $encoded_filename = str_replace('+', '%20', $encoded_filename);
+            if (preg_match('/MSIE/', $_SERVER['HTTP_USER_AGENT'])) {
+                header('Content-Disposition: attachment; filename="'.$encoded_filename.'"');
+            } elseif (preg_match('/Firefox/', $_SERVER['HTTP_USER_AGENT'])) {
+                header('Content-Disposition: attachment; filename*="utf8\'\''.$filename.'"');
+            } else {
+                header('Content-Disposition: attachment; filename="'.$filename.'"');
+            }
+
             header('Content-Transfer-Encoding: binary');
             header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
