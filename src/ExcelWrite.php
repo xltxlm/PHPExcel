@@ -68,12 +68,19 @@ final class ExcelWrite
     }
 
     /**
+     * 如果是一个模型的类数组,那么需要转换一下,并且去掉索引,变成数字索引
      * @param array $data
      *
      * @return ExcelWrite
      */
     public function setData(array $data): ExcelWrite
     {
+        $var = current($data);
+        if (is_object($var) && method_exists($var, '__toArray')) {
+            foreach ($data as &$datum) {
+                eval('$datum = array_values($datum->__toArray());');
+            }
+        }
         $this->data = $data;
 
         return $this;
@@ -159,7 +166,6 @@ final class ExcelWrite
                 \PHPExcel_Style_Alignment::VERTICAL_CENTER
             );
         }
-
         //生成excel表格数据
         foreach ($this->getData() as $getalldata) {
             ++$coli;
