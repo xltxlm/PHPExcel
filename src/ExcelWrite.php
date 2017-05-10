@@ -216,6 +216,7 @@ final class ExcelWrite
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
             header('Pragma: no-cache');
             $objWriter->save('php://output');
+            die;
         }
     }
 }
