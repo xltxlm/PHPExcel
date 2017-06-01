@@ -179,7 +179,7 @@ final class ExcelWrite
                 //如果是数字
                 $exsist = preg_match('#^[0-9\.,]+$#', $v);
                 //以字符串的方式设置值,设定特定格式内容信息
-                if ($exsist) {
+                if ($exsist && substr_count($v,',')==1) {
                     $v = strtr($v, ["," => ""]);
                     $PHPExcel_Worksheet->setCellValueExplicit("{$char}{$coli}", $v, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
                 } else {
