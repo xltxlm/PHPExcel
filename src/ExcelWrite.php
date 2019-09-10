@@ -199,7 +199,6 @@ final class ExcelWrite
         } else {
             //直接输出excel到浏览器
             header('Content-Type: application/force-download');
-            header('Content-disposition:attachment;filename="'.urlencode(basename($this->filename)));
             $filename = basename($this->filename);
             $encoded_filename = urlencode($filename);
             $encoded_filename = str_replace('+', '%20', $encoded_filename);
